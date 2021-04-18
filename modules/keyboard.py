@@ -4,7 +4,7 @@ from aiogram import Bot, Dispatcher, executor, types
 from constants import buttons
 
 
-def get_keyboard():
+def get_keyboard() -> types.ReplyKeyboardMarkup:
     markup = types.ReplyKeyboardMarkup(
         resize_keyboard=True,
         row_width=1,
