@@ -49,3 +49,17 @@ async def selecting_activity_keyboard(message: types.Message, context: FSMContex
         )
 
     return markup
+
+
+@kb.with_state(state=States.ACTIVE_ACTIVITY)
+async def active_activity_keyboard(message: types.Message, context: FSMContext) -> types.ReplyKeyboardMarkup:
+    markup = types.ReplyKeyboardMarkup(
+        resize_keyboard=True
+    )
+
+    markup.row(
+        types.KeyboardButton(buttons.STOP_ACTIVITY),
+        types.KeyboardButton(buttons.STATUS)
+    )
+
+    return markup

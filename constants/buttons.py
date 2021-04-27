@@ -7,3 +7,6 @@ ADD_TIME = "➕ Добавить время"
 
 MY_ACTIVITIES = "🧩 Мои занятия"
 MY_STATS = "📊 Моя статистика"
+
+STOP_ACTIVITY = "⏹ Стоп"
+STATUS = "🔄 Статус"
