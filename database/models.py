@@ -26,28 +26,28 @@ class ChatXUser(db.Model):
 
 class ActivityType(db.Model):
     __tablename__ = "activity_types"
-    id = Column(Integer, Sequence('activity_type_id_seq'), primary_key=True)
-    name = Column(String(100))
-    with_benefit = Column(Boolean, default=False)
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100), nullable=False)
+    with_benefit = Column(Boolean, default=False, nullable=False)
     owner = Column(Integer, ForeignKey("users.user_id"))
-    access = Column(Integer, default=0)
+    access = Column(Integer, server_default="0", nullable=False)
 
 
 class Subactivity(db.Model):
     __tablename__ = "subactivities"
-    id = Column(Integer, Sequence('subactivity_id_seq'), primary_key=True)
+    id = Column(Integer, Sequence('subactivities_id_seq'), primary_key=True)
     activity_type = Column(Integer, ForeignKey('activity_types.id'))
     user_id = Column(Integer, ForeignKey("users.user_id"))
 
 
 class Activity(db.Model):
     __tablename__ = "activities"
-    id = Column(Integer, Sequence('activity_id_seq'), primary_key=True)
-    activity_type = Column(Integer, ForeignKey('activity_types.id'))
+    id = Column(Integer, primary_key=True)
+    activity_type = Column(Integer, ForeignKey('activity_types.id'), nullable=False)
     subactivity = Column(Integer, ForeignKey('subactivities.id'))
-    start_time = Column(TIMESTAMP, server_default=func.current_timestamp())
+    start_time = Column(TIMESTAMP, server_default=func.current_timestamp(), nullable=False)
     duration = Column(Interval)
-    user_id = Column(Integer, ForeignKey("users.user_id"))
+    user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
 
 
 

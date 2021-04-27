@@ -3,7 +3,7 @@ from aiogram.dispatcher.filters.builtin import CommandStart
 from aiogram.dispatcher import FSMContext
 
 from loader import dp
-from modules import keyboard
+from keyboard import kb
 from database.user import check_user_and_chat
 from states import States
 
@@ -22,7 +22,7 @@ async def bot_start(message: types.Message, state: FSMContext):
     await States.MAIN_MENU.set()
 
     # Получение клавиатуры главного меню
-    markup = await keyboard.get_keyboard(state)
+    markup = await kb.get_keyboard(message, state)
 
     await message.answer(f"Привет, {message.from_user.full_name}!",
                          reply_markup=markup)

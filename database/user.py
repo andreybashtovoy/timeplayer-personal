@@ -1,4 +1,4 @@
-from .models import User, Chat, ChatXUser
+from .models import User, Chat, ChatXUser, ActivityType
 
 
 async def check_user_and_chat(user_id, username, chat_id, chat_name):
@@ -29,3 +29,8 @@ async def check_user_and_chat(user_id, username, chat_id, chat_name):
             chat_id=chat_id,
             user_id=user_id
         )
+
+
+async def get_user_accessible_activity_types(user_id) -> list[ActivityType]:
+    result = await ActivityType.query.gino.all()
+    return result
