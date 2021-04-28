@@ -5,6 +5,6 @@ db = Gino()
 
 
 async def load_db():
-    await db.set_bind(POSTGRES_URI)
+    await db.set_bind(POSTGRES_URI, echo=False)
     await db.gino.create_all()
 

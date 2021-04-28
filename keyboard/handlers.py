@@ -17,7 +17,8 @@ async def main_menu_keyboard(message: types.Message, context: FSMContext) -> typ
     markup = types.ReplyKeyboardMarkup(
         resize_keyboard=True,
         row_width=1,
-        one_time_keyboard=True
+        one_time_keyboard=True,
+        selective=True
     )
 
     markup.row(
@@ -40,7 +41,8 @@ async def selecting_activity_keyboard(message: types.Message, context: FSMContex
 
     markup = types.ReplyKeyboardMarkup(
         resize_keyboard=True,
-        row_width=1
+        row_width=1,
+        selective=True
     )
 
     for activity_type in activity_types:
@@ -54,7 +56,8 @@ async def selecting_activity_keyboard(message: types.Message, context: FSMContex
 @kb.with_state(state=States.ACTIVE_ACTIVITY)
 async def active_activity_keyboard(message: types.Message, context: FSMContext) -> types.ReplyKeyboardMarkup:
     markup = types.ReplyKeyboardMarkup(
-        resize_keyboard=True
+        resize_keyboard=True,
+        selective=True
     )
 
     markup.row(

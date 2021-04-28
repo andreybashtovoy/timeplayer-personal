@@ -1,6 +1,8 @@
-from sqlalchemy import Column, String, Integer, Sequence, Boolean, ForeignKey
+from sqlalchemy import Column, String, Integer, Sequence, Boolean, ForeignKey, BigInteger
 from sqlalchemy.types import TIMESTAMP, Interval
 from sqlalchemy.sql import func
+
+from datetime import datetime
 
 from .loader import db
 
@@ -9,18 +11,18 @@ class User(db.Model):
     __tablename__ = "users"
     user_id = Column(Integer, primary_key=True)
     username = Column(String(32))
-    registration_datetime = Column(TIMESTAMP(), server_default=func.current_timestamp())
+    registration_datetime = Column(TIMESTAMP(), default=datetime.utcnow, nullable=False)
 
 
 class Chat(db.Model):
     __tablename__ = "chats"
-    chat_id = Column(Integer, primary_key=True)
+    chat_id = Column(BigInteger, primary_key=True)
     name = Column(String)
 
 
 class ChatXUser(db.Model):
     __tablename__ = "chats_x_users"
-    chat_id = Column(Integer, ForeignKey("chats.chat_id"))
+    chat_id = Column(BigInteger, ForeignKey("chats.chat_id"))
     user_id = Column(Integer, ForeignKey("users.user_id"))
 
 
@@ -29,8 +31,7 @@ class ActivityType(db.Model):
     id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False)
     with_benefit = Column(Boolean, default=False, nullable=False)
-    owner = Column(Integer, ForeignKey("users.user_id"))
-    access = Column(Integer, server_default="0", nullable=False)
+    default = Column(Boolean, default=False, nullable=False)
 
 
 class Subactivity(db.Model):
@@ -45,9 +46,13 @@ class Activity(db.Model):
     id = Column(Integer, primary_key=True)
     activity_type = Column(Integer, ForeignKey('activity_types.id'), nullable=False)
     subactivity = Column(Integer, ForeignKey('subactivities.id'))
-    start_time = Column(TIMESTAMP, server_default=func.current_timestamp(), nullable=False)
+    start_time = Column(TIMESTAMP, default=datetime.utcnow, nullable=False)
     duration = Column(Interval)
     user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
+    chat_id = Column(BigInteger, ForeignKey("chats.chat_id"), nullable=False)
 
 
-
+class ChatXActivityType(db.Model):
+    __tablename__ = "chats_x_activity_types"
+    chat_id = Column(BigInteger, ForeignKey("chats.chat_id"), nullable=False)
+    activity_type = Column(Integer, ForeignKey('activity_types.id'), nullable=False)
