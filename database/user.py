@@ -39,6 +39,12 @@ async def get_user_accessible_activity_types(user_id) -> list[ActivityType]:
     return result
 
 
+async def get_chat_activity_types(chat_id) -> list[ActivityType]:
+    results = await ChatXActivityType.__table__.join(ActivityType.__table__).select().where(
+        ChatXActivityType.chat_id == chat_id).gino.all()
+    return results
+
+
 async def get_user_active_activity(user_id, chat_id) -> Tuple[ActivityType, timedelta]:
     activity = await Activity.query.where(
         and_(Activity.user_id == user_id, Activity.chat_id == chat_id, Activity.duration == None)).gino.first()
@@ -60,5 +66,6 @@ async def check_has_activities(chat_id):
         for default_activity_type in default_activity_types:
             await ChatXActivityType.create(
                 chat_id=chat_id,
-                activity_type=default_activity_type.id
+                activity_type=default_activity_type.id,
+                with_benefit=default_activity_type.with_benefit_default
             )

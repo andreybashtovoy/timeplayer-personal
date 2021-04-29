@@ -37,12 +37,16 @@ async def main_menu_keyboard(message: types.Message, context: FSMContext) -> typ
 
 @kb.with_state(state=States.SELECTING_ACTIVITY)
 async def selecting_activity_keyboard(message: types.Message, context: FSMContext) -> types.ReplyKeyboardMarkup:
-    activity_types = await user.get_user_accessible_activity_types(message.from_user.id)
+    activity_types = await user.get_chat_activity_types(message.chat.id)
 
     markup = types.ReplyKeyboardMarkup(
         resize_keyboard=True,
         row_width=1,
         selective=True
+    )
+    
+    markup.add(
+        types.KeyboardButton(buttons.BACK)
     )
 
     for activity_type in activity_types:
@@ -64,5 +68,28 @@ async def active_activity_keyboard(message: types.Message, context: FSMContext) 
         types.KeyboardButton(buttons.STOP_ACTIVITY),
         types.KeyboardButton(buttons.STATUS)
     )
+
+    return markup
+
+
+@kb.with_state(state=States.MY_ACTIVITIES)
+async def my_activities_keyboard(message: types.Message, context: FSMContext) -> types.ReplyKeyboardMarkup:
+    markup = types.ReplyKeyboardMarkup(
+        resize_keyboard=True,
+        selective=True,
+        row_width=1
+    )
+
+    markup.row(
+        types.KeyboardButton(buttons.CREATE),
+        types.KeyboardButton(buttons.BACK)
+    )
+
+    activity_types = await user.get_chat_activity_types(message.chat.id)
+
+    for activity_type in activity_types:
+        markup.add(
+            types.KeyboardButton(activity_type.name)
+        )
 
     return markup

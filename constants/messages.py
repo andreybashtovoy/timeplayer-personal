@@ -19,3 +19,14 @@ STOPPED_ACTIVITY = text(
 STATUS = text(
     "🟢", hbold("{activity_type_name}"), hitalic("({hours} часов {minutes} минут {seconds} секунд)")
 )
+
+MY_ACTIVITIES = text(
+    emojize(':arrow_down:'),
+    "Здесь ты можешь смотреть свои личные занятия, настраивать их и создавать новые"
+)
+
+
+MAIN_MENU = text(
+    emojize(':arrow_down:'),
+    "Ты находишься в главном меню"
+)

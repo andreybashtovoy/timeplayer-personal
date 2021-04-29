@@ -5,3 +5,4 @@ class States(StatesGroup):
     MAIN_MENU = State()
     ACTIVE_ACTIVITY = State()
     SELECTING_ACTIVITY = State()
+    MY_ACTIVITIES = State()

@@ -30,7 +30,7 @@ class ActivityType(db.Model):
     __tablename__ = "activity_types"
     id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False)
-    with_benefit = Column(Boolean, default=False, nullable=False)
+    with_benefit_default = Column(Boolean, default=False, nullable=False)
     default = Column(Boolean, default=False, nullable=False)
 
 
@@ -56,3 +56,4 @@ class ChatXActivityType(db.Model):
     __tablename__ = "chats_x_activity_types"
     chat_id = Column(BigInteger, ForeignKey("chats.chat_id"), nullable=False)
     activity_type = Column(Integer, ForeignKey('activity_types.id'), nullable=False)
+    with_benefit = Column(Boolean, default=False, nullable=False)
