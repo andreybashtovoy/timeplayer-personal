@@ -93,3 +93,38 @@ async def my_activities_keyboard(message: types.Message, context: FSMContext) ->
         )
 
     return markup
+
+
+@kb.with_state(state=States.ENTER_ACTIVITY_TYPE_NAME)
+async def my_activities_keyboard(message: types.Message, context: FSMContext) -> types.ReplyKeyboardMarkup:
+    markup = types.ReplyKeyboardMarkup(
+        resize_keyboard=True,
+        selective=True,
+        row_width=1
+    )
+
+    markup.row(
+        types.KeyboardButton(buttons.BACK)
+    )
+
+    return markup
+
+
+@kb.with_state(state=States.SELECT_WITH_BENEFIT)
+async def my_activities_keyboard(message: types.Message, context: FSMContext) -> types.ReplyKeyboardMarkup:
+    markup = types.ReplyKeyboardMarkup(
+        resize_keyboard=True,
+        selective=True,
+        row_width=1
+    )
+
+    markup.row(
+        types.KeyboardButton(buttons.YES),
+        types.KeyboardButton(buttons.NO)
+    )
+
+    markup.row(
+        types.KeyboardButton(buttons.BACK)
+    )
+
+    return markup

@@ -30,8 +30,8 @@ class ActivityType(db.Model):
     __tablename__ = "activity_types"
     id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False)
-    with_benefit_default = Column(Boolean, default=False, nullable=False)
-    default = Column(Boolean, default=False, nullable=False)
+    with_benefit_default = Column(Boolean, server_default="False", nullable=False)
+    default = Column(Boolean, server_default="False", nullable=False)
 
 
 class Subactivity(db.Model):

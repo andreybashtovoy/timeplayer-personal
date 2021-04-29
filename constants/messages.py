@@ -30,3 +30,19 @@ MAIN_MENU = text(
     emojize(':arrow_down:'),
     "Ты находишься в главном меню"
 )
+
+
+ENTER_ACTIVITY_TYPE_NAME = text(
+    emojize(':lower_left_crayon:'),
+    "Напиши название занятия"
+)
+
+
+IS_WITH_BENEFIT = text(
+    "Занятие с пользой?"
+)
+
+ACTIVITY_TYPE_CREATED = text(
+    emojize(':heavy_check_mark:'),
+    "Занятие успешно добавлено"
+)

@@ -1,13 +1,15 @@
-from .models import Activity, ActivityType
+from .models import Activity, ActivityType, ChatXActivityType
 from .user import get_user_accessible_activity_types
 from datetime import timedelta, datetime
 from typing import Tuple
 from sqlalchemy.sql.expression import literal_column
 from sqlalchemy import and_
 
+from .user import get_chat_activity_types
+
 
 async def start_activity_by_name(user_id, chat_id, activity_name) -> Activity:
-    activity_types = await get_user_accessible_activity_types(user_id)
+    activity_types = await get_chat_activity_types(chat_id)
 
     activity_type_id = None
 
@@ -44,3 +46,30 @@ async def stop_activity(user_id, chat_id) -> Tuple[Activity, ActivityType]:
         activity_type = await ActivityType.query.where(ActivityType.id == activity.activity_type).gino.first()
 
     return activity, activity_type
+
+
+async def create_activity_type(chat_id, name, with_benefit):
+    activity_type = await ActivityType.query.where(ActivityType.name == name).gino.first()
+
+    # Если типа занятия с таким названием ещё нет в базе, создаем его
+    if activity_type is None:
+        activity_type = await ActivityType.create(
+            name=name
+        )
+
+    # Проверяем есть ли принадлежность этого занятия этому чату
+    chat_x_activity_type = await ChatXActivityType.query.where(
+        and_(
+            ChatXActivityType.chat_id == chat_id,
+            ChatXActivityType.activity_type == activity_type.id
+        )
+    ).gino.first()
+
+    # Если нет, то создаём
+    if chat_x_activity_type is None:
+        chat_x_activity_type = await ChatXActivityType.create(
+            chat_id=chat_id,
+            activity_type=activity_type.id,
+            with_benefit=with_benefit
+        )
+
