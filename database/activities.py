@@ -8,18 +8,19 @@ from sqlalchemy import and_
 from .user import get_chat_activity_types
 
 
-async def start_activity_by_name(user_id, chat_id, activity_name) -> Activity:
+async def get_chat_activity_type_by_name(chat_id, activity_name) -> ActivityType:
     activity_types = await get_chat_activity_types(chat_id)
-
-    activity_type_id = None
 
     for activity_type in activity_types:
         if activity_type.name == activity_name:
-            activity_type_id = activity_type.id
-            break
+            return activity_type
 
-    if activity_type_id is not None:
-        activity = await start_activity(user_id, chat_id, activity_type_id)
+
+async def start_activity_by_name(user_id, chat_id, activity_name) -> Activity:
+    activity_type = await get_chat_activity_type_by_name(chat_id, activity_name)
+
+    if activity_type is not None:
+        activity = await start_activity(user_id, chat_id, activity_type.id)
         return activity
 
 
@@ -36,7 +37,8 @@ async def start_activity(user_id, chat_id, activity_type) -> Activity:
 async def stop_activity(user_id, chat_id) -> Tuple[Activity, ActivityType]:
     activity, activity_type = None, None
 
-    activities = await Activity.query.where(and_(Activity.user_id == user_id, Activity.chat_id == chat_id, Activity.duration == None)).gino.all()
+    activities = await Activity.query.where(
+        and_(Activity.user_id == user_id, Activity.chat_id == chat_id, Activity.duration == None)).gino.all()
 
     for activity in activities:
         duration = datetime.utcnow() - activity.start_time
@@ -73,3 +75,22 @@ async def create_activity_type(chat_id, name, with_benefit):
             with_benefit=with_benefit
         )
 
+
+async def remove_activity_type(activity_type_id, chat_id):
+    await ChatXActivityType.delete.where(
+        and_(
+            ChatXActivityType.activity_type == activity_type_id,
+            ChatXActivityType.chat_id == chat_id
+        )
+    ).gino.status()
+
+
+async def set_with_benefit(activity_type_id, chat_id, with_benefit):
+    await ChatXActivityType.update.values(
+        with_benefit=with_benefit
+    ).where(
+        and_(
+            ChatXActivityType.activity_type == activity_type_id,
+            ChatXActivityType.chat_id == chat_id
+        )
+    ).gino.status()

@@ -19,7 +19,7 @@ async def back_to_main_manu(message: types.Message, state: FSMContext):
     )
 
 
-@dp.message_handler(state=[States.ENTER_ACTIVITY_TYPE_NAME, States.SELECT_WITH_BENEFIT], text=buttons.BACK)
+@dp.message_handler(state=[States.ENTER_ACTIVITY_TYPE_NAME, States.SELECT_WITH_BENEFIT, States.CURRENT_ACTVITY_TYPE], text=buttons.BACK)
 async def back_to_my_activities(message: types.Message, state: FSMContext):
     await States.MY_ACTIVITIES.set()  # Устанавливаем состояние меню занятий пользователя
 

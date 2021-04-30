@@ -8,3 +8,4 @@ class States(StatesGroup):
     MY_ACTIVITIES = State()
     ENTER_ACTIVITY_TYPE_NAME = State()
     SELECT_WITH_BENEFIT = State()
+    CURRENT_ACTVITY_TYPE = State()

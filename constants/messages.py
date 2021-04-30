@@ -15,7 +15,6 @@ STOPPED_ACTIVITY = text(
     sep="\n"
 )
 
-
 STATUS = text(
     "🟢", hbold("{activity_type_name}"), hitalic("({hours} часов {minutes} минут {seconds} секунд)")
 )
@@ -25,18 +24,15 @@ MY_ACTIVITIES = text(
     "Здесь ты можешь смотреть свои личные занятия, настраивать их и создавать новые"
 )
 
-
 MAIN_MENU = text(
     emojize(':arrow_down:'),
     "Ты находишься в главном меню"
 )
 
-
 ENTER_ACTIVITY_TYPE_NAME = text(
     emojize(':lower_left_crayon:'),
     "Напиши название занятия"
 )
-
 
 IS_WITH_BENEFIT = text(
     "Занятие с пользой?"
@@ -45,4 +41,23 @@ IS_WITH_BENEFIT = text(
 ACTIVITY_TYPE_CREATED = text(
     emojize(':heavy_check_mark:'),
     "Занятие успешно добавлено"
+)
+
+CURRENT_ACTIVITY = text(
+    text(
+        emojize(':dart:'), "Занятие:", hitalic('{activity_type_name}')
+    ),
+    text(
+        emojize(':muscle:'), "С пользой:", hitalic('{with_benefit}')
+    ),
+    text(
+        emojize(':stopwatch:'), "Потрачено времени:", hitalic('{hours} часов {minutes} минут {seconds} секунд')
+    ),
+    sep="\n"
+)
+
+REMOVED_ACTIVITY_TYPE = text(
+    emojize(':heavy_check_mark:'),
+    "Занятие успешно удалено.",
+    "Чтобы восстановить занятие вместе со всем прогрессом, необходимо создать новое занятие с таким же названием."
 )

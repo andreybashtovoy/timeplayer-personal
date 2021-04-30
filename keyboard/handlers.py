@@ -44,7 +44,7 @@ async def selecting_activity_keyboard(message: types.Message, context: FSMContex
         row_width=1,
         selective=True
     )
-    
+
     markup.add(
         types.KeyboardButton(buttons.BACK)
     )
@@ -124,6 +124,33 @@ async def my_activities_keyboard(message: types.Message, context: FSMContext) ->
     )
 
     markup.row(
+        types.KeyboardButton(buttons.BACK)
+    )
+
+    return markup
+
+
+@kb.with_state(state=States.CURRENT_ACTVITY_TYPE)
+async def current_activity_keyboard(message: types.Message, context: FSMContext) -> types.ReplyKeyboardMarkup:
+    markup = types.ReplyKeyboardMarkup(
+        resize_keyboard=True,
+        selective=True,
+        row_width=1
+    )
+
+    data = await context.get_data()  # Получаем данные пользователя
+
+    if data.get('current_activity_type_with_benefit'):
+        markup.add(
+            types.KeyboardButton(buttons.MAKE_WITHOUT_BENEFIT)
+        )
+    else:
+        markup.add(
+            types.KeyboardButton(buttons.MAKE_WITH_BENEFIT)
+        )
+
+    markup.add(
+        types.KeyboardButton(buttons.REMOVE),
         types.KeyboardButton(buttons.BACK)
     )
 

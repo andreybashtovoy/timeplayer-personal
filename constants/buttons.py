@@ -17,3 +17,7 @@ BACK = "⤴️ Вернуться"
 
 YES = "Да"
 NO = "Нет"
+
+MAKE_WITH_BENEFIT = "Сделать полезным"
+MAKE_WITHOUT_BENEFIT = "Сделать неполезным"
+REMOVE = "❌ Удалить"
