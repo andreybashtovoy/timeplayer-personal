@@ -37,8 +37,11 @@ class ActivityType(db.Model):
 class Subactivity(db.Model):
     __tablename__ = "subactivities"
     id = Column(Integer, Sequence('subactivities_id_seq'), primary_key=True)
+    name = Column(String(100), nullable=False)
     activity_type = Column(Integer, ForeignKey('activity_types.id'))
     user_id = Column(Integer, ForeignKey("users.user_id"))
+    chat_id = Column(Integer, ForeignKey("chats.chat_id"))
+    is_removed = Column(Boolean, server_default="False", nullable=False)
 
 
 class Activity(db.Model):

@@ -22,3 +22,18 @@ async def get_total_user_spent_time(user_id, chat_id, activity_type_id) -> timed
         return timedelta()
     else:
         return result
+
+
+async def get_total_user_spent_time_subactivity(user_id, chat_id, subactivity_id) -> timedelta:
+    result = await db.select([func.sum(Activity.duration)]).where(
+        and_(
+            Activity.user_id == user_id,
+            Activity.chat_id == chat_id,
+            Activity.subactivity == subactivity_id
+        )
+    ).gino.scalar()
+
+    if result is None:
+        return timedelta()
+    else:
+        return result

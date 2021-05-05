@@ -1,11 +1,12 @@
 # Names of buttons
 
 START_ACTIVITY = "▶️ Занятие"
-START_PROJECT = "▶️ Подзанятие"
+START_SUBACTIVITY = "▶️ Подзанятие"
 
 ADD_TIME = "➕ Добавить время"
 
 MY_ACTIVITIES = "🧩 Мои занятия"
+MY_SUBACTIVITIES = "🎲 Мои подзанятия"
 MY_STATS = "📊 Моя статистика"
 
 STOP_ACTIVITY = "⏹ Стоп"

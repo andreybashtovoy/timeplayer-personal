@@ -23,19 +23,26 @@ async def main_menu_keyboard(message: types.Message, context: FSMContext) -> typ
 
     markup.row(
         types.KeyboardButton(buttons.START_ACTIVITY),
-        types.KeyboardButton(buttons.START_PROJECT)
+        types.KeyboardButton(buttons.START_SUBACTIVITY)
     )
 
     markup.add(
-        types.KeyboardButton(buttons.ADD_TIME),
+        types.KeyboardButton(buttons.ADD_TIME)
+    )
+
+    markup.row(
         types.KeyboardButton(buttons.MY_ACTIVITIES),
+        types.KeyboardButton(buttons.MY_SUBACTIVITIES)
+    )
+
+    markup.add(
         types.KeyboardButton(buttons.MY_STATS)
     )
 
     return markup
 
 
-@kb.with_state(state=States.SELECTING_ACTIVITY)
+@kb.with_state(state=[States.SELECTING_ACTIVITY, States.SA_SELECTING_ACTIVITY])
 async def selecting_activity_keyboard(message: types.Message, context: FSMContext) -> types.ReplyKeyboardMarkup:
     activity_types = await user.get_chat_activity_types(message.chat.id)
 
@@ -52,6 +59,31 @@ async def selecting_activity_keyboard(message: types.Message, context: FSMContex
     for activity_type in activity_types:
         markup.add(
             types.KeyboardButton(activity_type.name)
+        )
+
+    return markup
+
+
+@kb.with_state(state=States.SELECTING_SUBACTIVITY)
+async def selecting_subactivity(message: types.Message, context: FSMContext) -> types.ReplyKeyboardMarkup:
+    markup = types.ReplyKeyboardMarkup(
+        resize_keyboard=True,
+        row_width=1,
+        selective=True
+    )
+
+    markup.add(
+        types.KeyboardButton(buttons.BACK)
+    )
+
+    subactivities = await user.get_all_user_subactivities(
+        user_id=message.from_user.id,
+        chat_id=message.chat.id
+    )
+
+    for subactivity in subactivities:
+        markup.add(
+            types.KeyboardButton("%s (%s)" % (subactivity.name, subactivity.activity_name))
         )
 
     return markup
@@ -95,8 +127,8 @@ async def my_activities_keyboard(message: types.Message, context: FSMContext) ->
     return markup
 
 
-@kb.with_state(state=States.ENTER_ACTIVITY_TYPE_NAME)
-async def my_activities_keyboard(message: types.Message, context: FSMContext) -> types.ReplyKeyboardMarkup:
+@kb.with_state(state=[States.ENTER_ACTIVITY_TYPE_NAME, States.ENTER_ACTIVITY_TYPE_NAME])
+async def enter_something(message: types.Message, context: FSMContext) -> types.ReplyKeyboardMarkup:
     markup = types.ReplyKeyboardMarkup(
         resize_keyboard=True,
         selective=True,
@@ -148,6 +180,51 @@ async def current_activity_keyboard(message: types.Message, context: FSMContext)
         markup.add(
             types.KeyboardButton(buttons.MAKE_WITH_BENEFIT)
         )
+
+    markup.add(
+        types.KeyboardButton(buttons.REMOVE),
+        types.KeyboardButton(buttons.BACK)
+    )
+
+    return markup
+
+
+@kb.with_state(state=States.SA_CURRENT_ACTIVITY)
+async def sa_current_activity_keyboard(message: types.Message, context: FSMContext) -> types.ReplyKeyboardMarkup:
+    markup = types.ReplyKeyboardMarkup(
+        resize_keyboard=True,
+        selective=True,
+        row_width=1
+    )
+
+    markup.row(
+        types.KeyboardButton(buttons.CREATE),
+        types.KeyboardButton(buttons.BACK)
+    )
+
+    data = await context.get_data()  # Получаем данные пользователя
+
+    subactivities = await user.get_user_subactivities(
+        user_id=message.from_user.id,
+        chat_id=message.chat.id,
+        activity_type_id=data.get('current_activity_type_id')
+    )
+
+    for subactivity in subactivities:
+        markup.add(
+            types.KeyboardButton(subactivity.name)
+        )
+
+    return markup
+
+
+@kb.with_state(state=States.CURRENT_SUBACIVITY)
+async def current_subactivity(message: types.Message, context: FSMContext) -> types.ReplyKeyboardMarkup:
+    markup = types.ReplyKeyboardMarkup(
+        resize_keyboard=True,
+        selective=True,
+        row_width=1
+    )
 
     markup.add(
         types.KeyboardButton(buttons.REMOVE),

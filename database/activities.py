@@ -1,4 +1,4 @@
-from .models import Activity, ActivityType, ChatXActivityType
+from .models import Activity, ActivityType, ChatXActivityType, Subactivity
 from .user import get_user_accessible_activity_types
 from datetime import timedelta, datetime
 from typing import Tuple
@@ -24,11 +24,12 @@ async def start_activity_by_name(user_id, chat_id, activity_name) -> Activity:
         return activity
 
 
-async def start_activity(user_id, chat_id, activity_type) -> Activity:
+async def start_activity(user_id, chat_id, activity_type, subactivity_id=None) -> Activity:
     activity = await Activity.create(
         user_id=user_id,
         chat_id=chat_id,
-        activity_type=activity_type
+        activity_type=activity_type,
+        subactivity=subactivity_id
     )
 
     return activity
@@ -44,7 +45,6 @@ async def stop_activity(user_id, chat_id) -> Tuple[Activity, ActivityType]:
         duration = datetime.utcnow() - activity.start_time
         await activity.update(duration=duration).apply()
 
-        activity = activity
         activity_type = await ActivityType.query.where(ActivityType.id == activity.activity_type).gino.first()
 
     return activity, activity_type
@@ -93,4 +93,35 @@ async def set_with_benefit(activity_type_id, chat_id, with_benefit):
             ChatXActivityType.activity_type == activity_type_id,
             ChatXActivityType.chat_id == chat_id
         )
+    ).gino.status()
+
+
+async def create_subactivity(activity_type_id, user_id, chat_id, name):
+    result = await Subactivity.query.where(
+        and_(
+            Subactivity.activity_type == activity_type_id,
+            Subactivity.user_id == user_id,
+            Subactivity.chat_id == chat_id,
+            Subactivity.name == name
+        )
+    ).gino.first()
+
+    if result is None:
+        await Subactivity.create(
+            activity_type=activity_type_id,
+            user_id=user_id,
+            chat_id=chat_id,
+            name=name
+        )
+    elif result.is_removed:
+        await result.update(
+            is_removed=False
+        ).apply()
+
+
+async def remove_subactivity(subactivity_id):
+    await Subactivity.update.values(
+        is_removed=True
+    ).where(
+        Subactivity.id == subactivity_id
     ).gino.status()

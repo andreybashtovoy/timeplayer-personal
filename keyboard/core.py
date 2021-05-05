@@ -15,12 +15,19 @@ class Keyboard:
                 result = await h(message, context)
                 return result
 
-    def with_state(self, state: State):
-        def registerhandler(handler):
-            if state in self.handlers:
+    def with_state(self, state):
+        def add_handler(state, handler):
+            if state.state in self.handlers:
                 self.handlers[state.state].append(handler)
             else:
                 self.handlers[state.state] = [handler]
+
+        def registerhandler(handler):
+            if type(state) is State:
+                add_handler(state, handler)
+            elif type(state) is list:
+                for s in state:
+                    add_handler(s, handler)
             return handler
 
         return registerhandler
