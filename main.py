@@ -1,12 +1,27 @@
 from aiogram import executor
+from aiohttp import web
+import asyncio
 
 from loader import dp
 import handlers
+from loader import routes
+import api
+
 from database.loader import load_db
+from constants import config
+
+app = web.Application()
+app.add_routes(routes)
 
 
-async def on_startup(dp):
-    await load_db()
+async def on_startup(*args):
+    await load_db()  # Подключение базы данных
+
+    # Запуск API-сервера
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, '0.0.0.0', config.API_PORT)
+    await site.start()
 
 
 if __name__ == '__main__':
