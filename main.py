@@ -9,8 +9,14 @@ import api
 
 from database.loader import load_db
 from constants import config
+from aiohttp_middlewares import (
+    cors_middleware
+)
 
-app = web.Application()
+app = web.Application(middlewares=(
+    [cors_middleware(allow_all=True)]
+))
+
 app.add_routes(routes)
 
 

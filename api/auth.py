@@ -1,6 +1,7 @@
 from aiohttp import web
 import hmac
 import hashlib
+import binascii
 import jwt
 
 from constants import config
@@ -9,28 +10,19 @@ from loader import routes
 
 @routes.get('/')
 async def tewr(request):
-    return web.Response(text="""
-    <html>
-    <head></head>
-    <body>
-    <h1>Hi</h1>
-    <script async src="https://telegram.org/js/telegram-widget.js?14" data-telegram-login="timeplayer_sdbot" data-size="large" data-onauth="onTelegramAuth(user)" data-request-access="write"></script>
-    <script type="text/javascript">
-      function onTelegramAuth(user) {
-        alert('Logged in as ' + user.first_name + ' ' + user.last_name + ' (' + user.id + (user.username ? ', @' + user.username : '') + ')');
-      }
-    </script>
-    </body>
-    </html>
-    """,
+    return web.Response(text=open("api/test.html").read(),
                         content_type='text/html')
 
 
-@routes.get('/auth')
+@routes.post('/auth')
 async def hello(request):
     data = await request.post()
 
+    data = dict(data)
+
     data_hash = data.pop('hash')
+
+    data = dict(sorted(data.items(), key=lambda x: x[0].lower()))
 
     data_check_list = list()
 
@@ -41,9 +33,10 @@ async def hello(request):
 
     data_check_string = "\n".join(data_check_list)
 
-    signature = hmac.new(config.BOT_TOKEN, data_check_string, hashlib.sha256).hexdigest()
+    secret_key = hashlib.sha256(config.BOT_TOKEN.encode()).digest()
+    _hash = hmac.new(secret_key, msg=data_check_string.encode(), digestmod=hashlib.sha256).hexdigest()
 
-    if signature == data_hash:
+    if _hash == data_hash:
         encoded = jwt.encode(data, config.BOT_TOKEN, algorithm="HS256")
 
         resp = {

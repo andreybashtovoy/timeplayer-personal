@@ -1,6 +1,7 @@
 from sqlalchemy import Column, String, Integer, Sequence, Boolean, ForeignKey, BigInteger
 from sqlalchemy.types import TIMESTAMP, Interval
 from sqlalchemy.sql import func
+from sqlalchemy.ext.hybrid import hybrid_property
 
 from datetime import datetime
 
@@ -53,6 +54,10 @@ class Activity(db.Model):
     duration = Column(Interval)
     user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
     chat_id = Column(BigInteger, ForeignKey("chats.chat_id"), nullable=False)
+
+    @hybrid_property
+    def end_time(self):
+        return self.start_time + self.duration
 
 
 class ChatXActivityType(db.Model):
