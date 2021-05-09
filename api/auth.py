@@ -49,3 +49,23 @@ async def hello(request):
         }
 
     return web.json_response(resp)
+
+
+@routes.post('/get_user')
+async def get_user(request):
+    data = await request.post()
+
+    try:
+        decoded = jwt.decode(data['token'], config.BOT_TOKEN, algorithms=["HS256"])
+
+        if decoded['id'] == data['user_id']:
+            return web.json_response({
+                'status': 'ok',
+                'data': decoded
+            })
+    except Exception as e:
+        print(e)
+        return web.json_response({
+            'status': 'error',
+            'message': 'token is invalid'
+        })
