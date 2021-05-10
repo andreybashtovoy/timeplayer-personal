@@ -7,6 +7,7 @@ from sqlalchemy import and_
 
 
 async def get_user_activities(user_id, chat_id, from_date, to_date) -> list[Activity]:
+
     activities = await Activity.query.where(
         and_(
             Activity.user_id == user_id,
