@@ -15,7 +15,7 @@ from aiohttp_middlewares import (
 )
 
 app = web.Application(middlewares=(
-    [cors_middleware(allow_all=True)]
+    [cors_middleware(origins=["https://timeplayer-dashboard.loca.lt/"], allow_credentials=True)]
 ))
 
 app.add_routes(routes)
