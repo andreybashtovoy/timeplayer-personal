@@ -24,7 +24,7 @@ def is_valid_token(token, user_id) -> bool:
 
 @routes.post('/calendar/activities')
 async def get_activities(request):
-    data = await request.post()
+    data = await request.json()
 
     token = request.cookies.get('token')
 
@@ -57,7 +57,7 @@ async def get_activities(request):
 
 @routes.post('/calendar/add')
 async def add_activity(request):
-    data = await request.post()
+    data = await request.json()
 
     token = request.cookies.get('token')
 
@@ -83,7 +83,7 @@ async def add_activity(request):
 
 @routes.post('/calendar/delete')
 async def remove_activity(request):
-    data = await request.post()
+    data = await request.json()
 
     token = request.cookies.get('token')
 
@@ -97,7 +97,7 @@ async def remove_activity(request):
 
 @routes.post('/calendar/edit')
 async def edit_activity(request):
-    data = await request.post()
+    data = await request.json()
 
     token = request.cookies.get('token')
 
