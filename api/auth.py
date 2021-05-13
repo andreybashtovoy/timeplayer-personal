@@ -66,3 +66,11 @@ async def get_user(request):
             return web.json_response(decoded)
     except Exception as e:
         return web.HTTPUnauthorized()
+
+
+@routes.get('/.well-known/pki-validation/577AFFC229945C574E2A6A846FC188B8.txt')
+async def pki(request):
+    return web.Response(text="""72C73D1B6E009F50629C3D61B37EC22A28406BB2F42B1229CE1B29E4A3210D99
+comodoca.com
+2ab628acd8d3f15""",
+                        content_type='text/html')

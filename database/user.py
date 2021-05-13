@@ -72,10 +72,10 @@ async def get_all_user_subactivities(user_id, chat_id) -> list[Subactivity]:
 
     #results = await Subactivity.join(ActivityType).select().gino.all()
 
-    query = db.text("""
+    query = db.text(f"""
     SELECT sa.*, a.name as activity_name FROM subactivities sa
     JOIN activity_types a ON sa.activity_type=a.id
-    WHERE NOT sa.is_removed
+    WHERE NOT sa.is_removed AND sa.user_id={user_id} AND sa.chat_id={chat_id}
     """)
     results = await db.all(query)
 
