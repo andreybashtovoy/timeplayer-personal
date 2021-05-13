@@ -13,9 +13,16 @@ from constants import config
 from aiohttp_middlewares import (
     cors_middleware
 )
+from aiohttp_middlewares.cors import DEFAULT_ALLOW_HEADERS
 
 app = web.Application(middlewares=(
-    [cors_middleware(origins=["https://timeplayer-dashboard.loca.lt/"], allow_credentials=True)]
+    [cors_middleware(
+        origins=["https://timeplayer-dashboard.loca.lt/"],
+        allow_credentials=True,
+        allow_methods=("POST", "PATCH"),
+        allow_headers=DEFAULT_ALLOW_HEADERS
+                      + ("X-Client-UID",),
+    )]
 ))
 
 app.add_routes(routes)
