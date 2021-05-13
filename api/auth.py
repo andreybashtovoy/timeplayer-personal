@@ -20,6 +20,8 @@ async def hello(request):
 
     data = dict(data)
 
+    print(data)
+
     data_hash = data.pop('hash')
 
     data = dict(sorted(data.items(), key=lambda x: x[0].lower()))
