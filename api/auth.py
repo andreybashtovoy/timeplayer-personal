@@ -16,12 +16,12 @@ async def tewr(request):
 
 @routes.post('/auth')
 async def hello(request):
-    data = await request.post()
+    data = await request.json()
 
-    asd = await request.json()
+    #asd = await request.json()
 
-    d = dict(asd)
-    print(d)
+    #d = dict(asd)
+    #print(d)
 
     data = dict(data)
 
