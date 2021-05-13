@@ -18,6 +18,11 @@ async def tewr(request):
 async def hello(request):
     data = await request.post()
 
+    asd = await request.json()
+
+    d = dict(asd)
+    print(d)
+
     data = dict(data)
 
     print(data)
