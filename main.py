@@ -19,9 +19,7 @@ app = web.Application(middlewares=(
         origins=["https://manage.sslforfree.com/", "http://timeplayer-new.loca.lt/", "http://timeplayer.loca.lt/"],
         #allow_all=True,
         allow_credentials=True,
-        allow_methods=("POST", "PATCH"),
-        allow_headers=DEFAULT_ALLOW_HEADERS
-                      + ("X-Client-UID",),
+        allow_methods=("POST", "PATCH", "GET")
     )]
 ))
 
