@@ -28,7 +28,9 @@ app = web.Application(middlewares=(
 
 app.add_routes(routes)
 
-sslcontext = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
+sslcontext = ssl.create_default_context(
+                purpose=ssl.Purpose.SERVER_AUTH, cafile='certificate.crt'
+            )
 sslcontext.load_cert_chain('certificate.crt', 'private.key')
 
 
