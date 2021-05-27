@@ -6,7 +6,6 @@ from loader import dp
 import handlers
 from loader import routes
 import api
-import ssl
 
 from database.loader import load_db
 from constants import config
@@ -28,11 +27,6 @@ app = web.Application(middlewares=(
 
 app.add_routes(routes)
 
-sslcontext = ssl.create_default_context(
-                purpose=ssl.Purpose.SERVER_AUTH, cafile='certificate.crt'
-            )
-sslcontext.load_cert_chain('certificate.crt', 'private.key')
-
 
 async def on_startup(*args):
     await load_db()  # Подключение базы данных
@@ -40,7 +34,7 @@ async def on_startup(*args):
     # Запуск API-сервера
     runner = web.AppRunner(app)
     await runner.setup()
-    site = web.TCPSite(runner, '0.0.0.0', config.API_PORT, ssl_context=sslcontext)
+    site = web.TCPSite(runner, '0.0.0.0', config.API_PORT)
     await site.start()
 
 
