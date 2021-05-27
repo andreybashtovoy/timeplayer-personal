@@ -29,7 +29,7 @@ app = web.Application(middlewares=(
 app.add_routes(routes)
 
 sslcontext = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
-sslcontext.load_cert_chain('certificate.crt', 'private.key')
+sslcontext.load_cert_chain('ca_bundle.crt', 'private.key')
 
 
 async def on_startup(*args):
