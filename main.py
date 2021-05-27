@@ -9,27 +9,14 @@ import api
 
 from database.loader import load_db
 from constants import config
-from aiohttp_middlewares import (
-    cors_middleware
-)
-from aiohttp_middlewares.cors import DEFAULT_ALLOW_HEADERS
 
-app = web.Application(middlewares=(
-    [cors_middleware(
-        origins=["https://manage.sslforfree.com/", "http://timeplayer-new.loca.lt/", "http://timeplayer.loca.lt/"],
-        #allow_all=True,
-        allow_credentials=True,
-        allow_methods=("POST", "PATCH"),
-        allow_headers=DEFAULT_ALLOW_HEADERS
-                      + ("X-Client-UID",),
-    )]
-))
+app = web.Application()
 
 app.add_routes(routes)
 
 
 async def on_startup(*args):
-    await load_db()  # Подключение базы данных
+    await load_db()  # Подключение базы данных.loca.lt/
 
     # Запуск API-сервера
     runner = web.AppRunner(app)
