@@ -16,7 +16,7 @@ from aiohttp_middlewares.cors import DEFAULT_ALLOW_HEADERS
 
 app = web.Application(middlewares=(
     [cors_middleware(
-        #origins=["https://timeplayer-dashboard.loca.lt/"],
+        origins=["https://manage.sslforfree.com/", "http://timeplayer-new.loca.lt/", "http://timeplayer.loca.lt/"],
         allow_all=True,
         allow_credentials=True,
         allow_methods=("POST", "PATCH"),
