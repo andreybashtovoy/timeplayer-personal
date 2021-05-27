@@ -54,6 +54,7 @@ async def hello(request):
             max_age=60*60*24*30,
             httponly=True,
             #domain=".timeplayer-new.loca.lt"
+            samesite=None
         )
 
         return response
