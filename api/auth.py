@@ -65,7 +65,7 @@ async def hello(request):
 
 @routes.post('/get_user')
 async def get_user(request):
-    data = await request.post()
+    data = await request.json()
 
     try:
         token = request.cookies.get('token')
