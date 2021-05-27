@@ -28,6 +28,9 @@ app = web.Application(middlewares=(
 
 app.add_routes(routes)
 
+sslcontext = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
+sslcontext.load_cert_chain('certificate.crt', 'private.key')
+
 
 async def on_startup(*args):
     await load_db()  # Подключение базы данных
@@ -35,7 +38,7 @@ async def on_startup(*args):
     # Запуск API-сервера
     runner = web.AppRunner(app)
     await runner.setup()
-    site = web.TCPSite(runner, '0.0.0.0', config.API_PORT)
+    site = web.TCPSite(runner, '0.0.0.0', config.API_PORT, ssl_context=sslcontext)
     await site.start()
 
 
