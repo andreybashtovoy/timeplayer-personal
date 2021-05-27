@@ -52,7 +52,8 @@ async def hello(request):
             name="token",
             value=encoded,
             max_age=60*60*24*30,
-            httponly=True
+            httponly=True,
+            domain=".timeplayer-new.loca.lt"
         )
 
         return response
