@@ -40,7 +40,7 @@ async def on_startup(*args):
     # Запуск API-сервера
     runner = web.AppRunner(app)
     await runner.setup()
-    site = web.TCPSite(runner, '0.0.0.0', config.API_PORT)
+    site = web.TCPSite(runner, '0.0.0.0', config.API_PORT, ssl_context=sslcontext)
     await site.start()
 
 
