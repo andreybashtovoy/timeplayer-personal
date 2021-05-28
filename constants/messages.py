@@ -46,6 +46,11 @@ ENTER_ACTIVITY_TYPE_NAME = text(
     "Напиши название занятия"
 )
 
+ENTER_SUBACTIVITY_TYPE_NAME = text(
+    emojize(':lower_left_crayon:'),
+    "Напиши название подзанятия"
+)
+
 IS_WITH_BENEFIT = text(
     "Занятие с пользой?"
 )
@@ -104,3 +109,15 @@ REMOVED_SUBACTIVITY = text(
 )
 
 AA_SELECTING_ACTIVITY = emojize('Выбери занятие, к которому хочешь добавить время :arrow_down::arrow_down::arrow_down:')
+AA_SELECTING_SUBACTIVITY = emojize('Выбери подзанятие, к которому хочешь добавить время :arrow_down::arrow_down::arrow_down:')
+
+AA_ENTER_DURATION = text(
+    emojize(':lower_left_crayon:'),
+    "Введи количество минут или продолжительность в формате чч:мм",
+    hitalic("(Например, 01:10 - 1 час 10 минут)")
+)
+
+ACTIVITY_ADDED = text(
+    emojize(':heavy_check_mark:'),
+    "Занятие успешно добавлено"
+)

@@ -89,6 +89,49 @@ async def selecting_subactivity(message: types.Message, context: FSMContext) -> 
     return markup
 
 
+@kb.with_state(state=States.AA_SELECTING_SUBACTIVITY)
+async def selecting_subactivity_keyboard(message: types.Message, context: FSMContext) -> types.ReplyKeyboardMarkup:
+    markup = types.ReplyKeyboardMarkup(
+        resize_keyboard=True,
+        row_width=1,
+        selective=True
+    )
+
+    markup.row(
+        types.KeyboardButton(buttons.WITHOUT_SUBACTIVITY),
+        types.KeyboardButton(buttons.BACK)
+    )
+
+    data = await context.get_data()  # Получаем данные пользователя
+
+    subactivities = await user.get_user_subactivities(
+        user_id=message.from_user.id,
+        chat_id=message.chat.id,
+        activity_type_id=data.get('current_activity_type_id')
+    )
+
+    for subactivity in subactivities:
+        markup.add(
+            types.KeyboardButton(subactivity.name)
+        )
+
+    return markup
+
+
+@kb.with_state(state=States.AA_ENTER_DURATION)
+async def enter_duration_keyboard(message: types.Message, context: FSMContext) -> types.ReplyKeyboardMarkup:
+    markup = types.ReplyKeyboardMarkup(
+        resize_keyboard=True,
+        selective=True
+    )
+
+    markup.row(
+        types.KeyboardButton(buttons.BACK)
+    )
+
+    return markup
+
+
 @kb.with_state(state=States.ACTIVE_ACTIVITY)
 async def active_activity_keyboard(message: types.Message, context: FSMContext) -> types.ReplyKeyboardMarkup:
     markup = types.ReplyKeyboardMarkup(

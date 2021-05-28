@@ -35,6 +35,19 @@ async def start_activity(user_id, chat_id, activity_type, subactivity_id=None) -
     return activity
 
 
+async def add_activity(user_id, chat_id, activity_type, duration, subactivity_id=None) -> Activity:
+    activity = await Activity.create(
+        user_id=user_id,
+        chat_id=chat_id,
+        activity_type=activity_type,
+        subactivity=subactivity_id,
+        duration=duration,
+        start_time=datetime.utcnow() - duration
+    )
+
+    return activity
+
+
 async def stop_activity(user_id, chat_id) -> Tuple[Activity, ActivityType]:
     activity, activity_type = None, None
 

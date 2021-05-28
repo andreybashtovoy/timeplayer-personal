@@ -9,7 +9,7 @@ from keyboard import kb
 
 @dp.message_handler(
     state=[States.MY_ACTIVITIES, States.SELECTING_ACTIVITY, States.SA_SELECTING_ACTIVITY, States.SELECTING_SUBACTIVITY,
-           States.AA_SELECTING_ACTIVITY],
+           States.AA_SELECTING_ACTIVITY, States.AA_SELECTING_SUBACTIVITY, States.AA_ENTER_DURATION],
     text=buttons.BACK)
 async def back_to_main_manu(message: types.Message, state: FSMContext):
     await States.MAIN_MENU.set()  # Устанавливаем состояние главного меню

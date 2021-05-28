@@ -59,7 +59,7 @@ async def request_new_subactivity_name(message: types.Message, state: FSMContext
     keyboard = await kb.get_keyboard(message, state)  # Получаем клавиатуру с текущим состоянием
 
     await message.reply(
-        text=messages.ENTER_ACTIVITY_TYPE_NAME,
+        text=messages.ENTER_SUBACTIVITY_TYPE_NAME,
         reply_markup=keyboard
     )
 
