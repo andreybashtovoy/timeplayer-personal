@@ -11,6 +11,9 @@ local_tz = tz.gettz('Europe/Zaporozhye')
 
 
 def is_valid_token(token, user_id) -> bool:
+
+    print(token, user_id)
+
     try:
         decoded = jwt.decode(token, config.BOT_TOKEN, algorithms=["HS256"])
     except Exception as e:
