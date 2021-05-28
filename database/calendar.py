@@ -16,6 +16,8 @@ async def get_user_activities(user_id, chat_id, from_date, to_date) -> list[Acti
         AND a.start_time > '{from_date}'
         AND a.start_time + a.duration < '{to_date}'
         """)
+
+    print(query)
     activities = await db.all(query)
 
     # activities = await Activity.query.where(

@@ -43,6 +43,8 @@ async def hello(request):
     secret_key = hashlib.sha256(config.BOT_TOKEN.encode()).digest()
     _hash = hmac.new(secret_key, msg=data_check_string.encode(), digestmod=hashlib.sha256).hexdigest()
 
+    print(_hash, data_hash)
+
     if _hash == data_hash:
         encoded = jwt.encode(data, config.BOT_TOKEN, algorithm="HS256")
 
