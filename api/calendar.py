@@ -44,6 +44,8 @@ async def get_activities(request):
         to_date=to_date.astimezone(tz=tz.UTC).replace(tzinfo=None)
     )
 
+    print(len(activities))
+
     results = list()
 
     for activity in activities:
@@ -52,7 +54,7 @@ async def get_activities(request):
             'activity_type': activity.activity_type,
             'subactivity': activity.subactivity,
             'start_time': activity.start_time.astimezone(local_tz).timestamp(),
-            'end_time': activity.start_time.astimezone(local_tz).timestamp()
+            'end_time': activity.end_time.astimezone(local_tz).timestamp()
         })
 
     return web.json_response(results)
