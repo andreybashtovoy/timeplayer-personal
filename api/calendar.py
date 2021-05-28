@@ -49,7 +49,7 @@ async def get_activities(request):
 
 
     for activity in activities:
-        print(type(activity.start_time.astimezone(local_tz) + activity.duration).timestamp())
+        print(type(activity.start_time.astimezone(local_tz) + activity.duration.timestamp()))
 
         results.append({
             'id': activity.id,
