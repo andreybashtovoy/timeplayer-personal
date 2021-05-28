@@ -51,8 +51,8 @@ async def get_activities(request):
             'id': activity.id,
             'activity_type': activity.activity_type,
             'subactivity': activity.subactivity,
-            'start_time': activity.start_time.astimezone(local_tz).timestamp(),
-            'end_time': (activity.start_time.astimezone(local_tz) + activity.duration).timestamp(),
+            'start_time': activity.start_time.astimezone(local_tz).timestamp() * 1000,
+            'end_time': (activity.start_time.astimezone(local_tz) + activity.duration).timestamp() * 1000,
             'activity_name': activity.activity_name,
             'subactivity_name': activity.subactivity_name
         })
