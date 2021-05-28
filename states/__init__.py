@@ -14,3 +14,6 @@ class States(StatesGroup):
     SA_CURRENT_ACTIVITY = State()
     ENTER_SUBACTIVITY_NAME = State()
     CURRENT_SUBACIVITY = State()
+    AA_SELECTING_ACTIVITY = State()
+    AA_SELECTING_SUBACTIVITY = State()
+    AA_ENTER_DURATION = State()

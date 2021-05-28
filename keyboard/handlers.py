@@ -42,7 +42,7 @@ async def main_menu_keyboard(message: types.Message, context: FSMContext) -> typ
     return markup
 
 
-@kb.with_state(state=[States.SELECTING_ACTIVITY, States.SA_SELECTING_ACTIVITY])
+@kb.with_state(state=[States.SELECTING_ACTIVITY, States.SA_SELECTING_ACTIVITY, States.AA_SELECTING_ACTIVITY])
 async def selecting_activity_keyboard(message: types.Message, context: FSMContext) -> types.ReplyKeyboardMarkup:
     activity_types = await user.get_chat_activity_types(message.chat.id)
 
@@ -232,3 +232,5 @@ async def current_subactivity(message: types.Message, context: FSMContext) -> ty
     )
 
     return markup
+
+

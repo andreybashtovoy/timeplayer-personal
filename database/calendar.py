@@ -4,18 +4,28 @@ from datetime import timedelta, datetime
 from typing import Tuple
 from sqlalchemy.sql.expression import literal_column
 from sqlalchemy import and_
+from .loader import db
 
 
 async def get_user_activities(user_id, chat_id, from_date, to_date) -> list[Activity]:
+    query = db.text(f"""
+        SELECT a.*, t.name as activity_name, sa.name as subactivity_name FROM activities a
+        JOIN activity_types t on t.id = a.activity_type
+        JOIN subactivities sa on sa.id = a.subactivity
+        WHERE a.user_id = {user_id} AND a.chat_id = {chat_id}
+        AND a.start_time > '{from_date}'
+        AND a.start_time + a.duration < '{to_date}'
+        """)
+    activities = await db.all(query)
 
-    activities = await Activity.query.where(
-        and_(
-            Activity.user_id == user_id,
-            Activity.chat_id == chat_id,
-            Activity.start_time > from_date,
-            Activity.start_time < to_date
-        )
-    ).gino.all()
+    # activities = await Activity.query.where(
+    #     and_(
+    #         Activity.user_id == user_id,
+    #         Activity.chat_id == chat_id,
+    #         Activity.start_time > from_date,
+    #         Activity.start_time < to_date
+    #     )
+    # ).gino.all()
 
     return activities
 
