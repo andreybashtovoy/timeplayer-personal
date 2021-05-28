@@ -11,7 +11,7 @@ async def get_user_activities(user_id, chat_id, from_date, to_date) -> list[Acti
     query = db.text(f"""
         SELECT a.*, t.name as activity_name, sa.name as subactivity_name FROM activities a
         JOIN activity_types t on t.id = a.activity_type
-        JOIN subactivities sa on sa.id = a.subactivity
+        LEFT JOIN subactivities sa on sa.id = a.subactivity
         WHERE a.user_id = {user_id} AND a.chat_id = {chat_id}
         AND a.start_time > '{from_date}'
         AND a.start_time + a.duration < '{to_date}'
