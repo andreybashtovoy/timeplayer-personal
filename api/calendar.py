@@ -52,7 +52,7 @@ async def get_activities(request):
             'activity_type': activity.activity_type,
             'subactivity': activity.subactivity,
             'start_time': activity.start_time.astimezone(local_tz).timestamp(),
-            'end_time': (activity.start_time.astimezone(local_tz) + activity.duration).timestamp(),
+            #'end_time': (activity.start_time.astimezone(local_tz) + activity.duration).timestamp(),
             'activity_name': activity.activity_name,
             'subactivity_name': activity.subactivity_name
         })
