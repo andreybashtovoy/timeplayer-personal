@@ -144,6 +144,10 @@ async def active_activity_keyboard(message: types.Message, context: FSMContext) 
         types.KeyboardButton(buttons.STATUS)
     )
 
+    markup.add(
+        types.KeyboardButton(buttons.STOP_PENALTY)
+    )
+
     return markup
 
 

@@ -109,8 +109,8 @@ async def edit_activity(request):
     if not is_valid_token(token, data['user_id']):
         return web.HTTPUnauthorized()
 
-    start_time = datetime.fromtimestamp(int(data['start_time']) / 1000, tz=local_tz).astimezone(tz.UTC).timestamp()
-    end_time = datetime.fromtimestamp(int(data['end_time']) / 1000, tz=local_tz).astimezone(tz.UTC).timestamp()
+    start_time = datetime.fromtimestamp(int(data['start_time']) / 1000, tz=local_tz).astimezone(tz.UTC).replace(tzinfo=None)
+    end_time = datetime.fromtimestamp(int(data['end_time']) / 1000, tz=local_tz).astimezone(tz.UTC).replace(tzinfo=None)
 
     await calendar.edit_activity(
         start_time=start_time,
