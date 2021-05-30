@@ -47,6 +47,18 @@ async def back_to_my_sa_selecting_activity(message: types.Message, state: FSMCon
     )
 
 
+@dp.message_handler(state=[States.ENTER_PENALTY], text=buttons.BACK)
+async def back_to_my_sa_selecting_activity(message: types.Message, state: FSMContext):
+    await States.ACTIVE_ACTIVITY.set()  # Устанавливаем состояние выбора занятия
+
+    keyboard = await kb.get_keyboard(message, state)  # Получаем клавиатуру с текущим состоянием
+
+    await message.reply(
+        text=messages.ACTIVE_ACTIVITY,
+        reply_markup=keyboard
+    )
+
+
 @dp.message_handler(state=[States.ENTER_SUBACTIVITY_NAME, States.CURRENT_SUBACIVITY], text=buttons.BACK)
 async def back_to_my_sa_current_activity(message: types.Message, state: FSMContext):
     await States.SA_CURRENT_ACTIVITY.set()  # Устанавливаем состояние выбора занятия

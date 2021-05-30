@@ -1,6 +1,6 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
-
+from datetime import timedelta
 from constants import buttons, messages
 from loader import dp
 from states import States
@@ -112,6 +112,52 @@ async def stop_activity(message: types.Message, state: FSMContext):
         parse_mode=types.ParseMode.HTML,
         reply_markup=keyboard
     )
+
+
+@dp.message_handler(state=States.ACTIVE_ACTIVITY, text=buttons.STOP_PENALTY)
+async def stop_penalty(message: types.Message, state: FSMContext):
+    await States.ENTER_PENALTY.set()
+
+    keyboard = await kb.get_keyboard(message, state)  # Получаем клавиатуру с текущим состоянием
+
+    # Получаем текст сообщения и форматируем с названием занятия и продолжительностью
+    text = messages.ENTER_PENALTY
+
+    await message.reply(
+        text=text,
+        parse_mode=types.ParseMode.HTML,
+        reply_markup=keyboard
+    )
+
+
+@dp.message_handler(state=States.ENTER_PENALTY)
+async def entered_penalty(message: types.Message, state: FSMContext):
+    if message.text.isdigit():
+        delta = timedelta(minutes=int(message.text))
+
+        try:
+            activity, activity_type = await activities.stop_activity(message.from_user.id,
+                                                                 message.chat.id,
+                                                                     delta=delta)  # Останавливаем занятие
+        except:
+            #### ERROR MESSAGE
+            return
+
+        await States.MAIN_MENU.set()  # Устанавливаем состояние главного меню
+
+        keyboard = await kb.get_keyboard(message, state)  # Получаем клавиатуру с текущим состоянием
+
+        # Получаем текст сообщения и форматируем с названием занятия и продолжительностью
+        text = messages.STOPPED_ACTIVITY.format(
+            activity_type_name=activity_type.name,
+            **td_to_dict(activity.duration)
+        )
+
+        await message.reply(
+            text=text,
+            parse_mode=types.ParseMode.HTML,
+            reply_markup=keyboard
+        )
 
 
 @dp.message_handler(state=States.ACTIVE_ACTIVITY, text=buttons.STATUS)

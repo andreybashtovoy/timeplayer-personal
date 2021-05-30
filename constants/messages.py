@@ -121,3 +121,10 @@ ACTIVITY_ADDED = text(
     emojize(':heavy_check_mark:'),
     "Занятие успешно добавлено"
 )
+
+ENTER_PENALTY = text(
+    emojize(':lower_left_crayon:'),
+    "Введи количество минут штрафа к занятию"
+)
+
+ACTIVE_ACTIVITY = emojize(':arrow_down::arrow_down::arrow_down:')

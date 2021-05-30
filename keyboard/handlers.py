@@ -174,7 +174,7 @@ async def my_activities_keyboard(message: types.Message, context: FSMContext) ->
     return markup
 
 
-@kb.with_state(state=[States.ENTER_ACTIVITY_TYPE_NAME, States.ENTER_ACTIVITY_TYPE_NAME])
+@kb.with_state(state=[States.ENTER_ACTIVITY_TYPE_NAME, States.ENTER_ACTIVITY_TYPE_NAME, States.ENTER_PENALTY])
 async def enter_something(message: types.Message, context: FSMContext) -> types.ReplyKeyboardMarkup:
     markup = types.ReplyKeyboardMarkup(
         resize_keyboard=True,
@@ -279,5 +279,7 @@ async def current_subactivity(message: types.Message, context: FSMContext) -> ty
     )
 
     return markup
+
+
 
 

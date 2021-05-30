@@ -48,14 +48,20 @@ async def add_activity(user_id, chat_id, activity_type, duration, subactivity_id
     return activity
 
 
-async def stop_activity(user_id, chat_id) -> Tuple[Activity, ActivityType]:
+async def stop_activity(user_id, chat_id, delta=None) -> Tuple[Activity, ActivityType]:
     activity, activity_type = None, None
 
     activities = await Activity.query.where(
         and_(Activity.user_id == user_id, Activity.chat_id == chat_id, Activity.duration == None)).gino.all()
 
     for activity in activities:
-        duration = datetime.utcnow() - activity.start_time
+        if delta is None:
+            duration = datetime.utcnow() - activity.start_time
+        else:
+            if datetime.utcnow() - activity.start_time > delta:
+                duration = datetime.utcnow() - activity.start_time - delta
+            else:
+                raise Exception
         await activity.update(duration=duration).apply()
 
         activity_type = await ActivityType.query.where(ActivityType.id == activity.activity_type).gino.first()

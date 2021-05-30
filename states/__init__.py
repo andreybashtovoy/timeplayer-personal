@@ -17,3 +17,4 @@ class States(StatesGroup):
     AA_SELECTING_ACTIVITY = State()
     AA_SELECTING_SUBACTIVITY = State()
     AA_ENTER_DURATION = State()
+    ENTER_PENALTY = State()
