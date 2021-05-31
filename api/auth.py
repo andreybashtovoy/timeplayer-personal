@@ -8,12 +8,6 @@ from constants import config
 from loader import routes
 
 
-@routes.get('/')
-async def tewr(request):
-    return web.Response(text=open("api/test.html").read(),
-                        content_type='text/html')
-
-
 @routes.post('/auth')
 async def hello(request):
     data = await request.json()

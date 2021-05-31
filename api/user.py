@@ -16,7 +16,7 @@ async def hello(request):
 
 
 @routes.get('/user/photo')
-async def info(request):
+async def photo(request):
     user_id = request.query.get('user_id')
 
     if user_id is None:

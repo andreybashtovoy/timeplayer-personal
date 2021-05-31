@@ -6,6 +6,7 @@ from loader import dp
 import handlers
 from loader import routes
 import api
+import dashboard
 
 from database.loader import load_db
 from constants import config
@@ -26,6 +27,7 @@ app = web.Application(middlewares=(
 ))
 
 app.add_routes(routes)
+
 
 
 async def on_startup(*args):
