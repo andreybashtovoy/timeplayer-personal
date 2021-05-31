@@ -132,3 +132,8 @@ PENALTY_ERROR = text(
 )
 
 ACTIVE_ACTIVITY = emojize(':arrow_down::arrow_down::arrow_down:')
+
+MY_STATS = text(
+    emojize(":bar_chart: Статистика твоего профиля доступна по ссылке:"),
+    "{link}"
+)

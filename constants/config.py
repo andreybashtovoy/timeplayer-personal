@@ -11,4 +11,6 @@ DB_NAME = env.str("DB_NAME")
 DB_LOGIN = env.str("DB_LOGIN")
 DB_PASSWORD = env.str("DB_PASSWORD")
 
+SERVER_URL = "https://timeplayer.tk"
+
 POSTGRES_URI = f"postgresql://{DB_LOGIN}:{DB_PASSWORD}@localhost:5432/{DB_NAME}"

@@ -4,5 +4,6 @@ from .activities import dp
 from .my_activities import dp
 from .my_subactivities import dp
 from .add_activity import dp
+from .stats import dp
 
 __all__ = ["dp"]
