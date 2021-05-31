@@ -7,6 +7,7 @@ from constants import buttons, messages
 from loader import dp
 from states import States
 from keyboard import kb
+from .core import update_state_and_send
 
 from database import activities, user
 
@@ -15,14 +16,9 @@ from modules.timedelta_convert import td_to_dict
 
 @dp.message_handler(state=States.MAIN_MENU, text=buttons.ADD_TIME)
 async def aa_select_activity(message: types.Message, state: FSMContext):
-    await States.AA_SELECTING_ACTIVITY.set()  # Устанавливаем состояние выбора занятия
-
-    keyboard = await kb.get_keyboard(message, state)  # Получаем клавиатуру с текущим состоянием
-
-    await message.reply(
-        text=messages.AA_SELECTING_ACTIVITY,
-        reply_markup=keyboard
-    )
+    await update_state_and_send(message, state,
+                                state=States.AA_SELECTING_ACTIVITY,
+                                text=messages.AA_SELECTING_ACTIVITY)
 
 
 @dp.message_handler(state=States.AA_SELECTING_ACTIVITY)
@@ -61,33 +57,20 @@ async def aa_selected_activity(message: types.Message, state: FSMContext):
 
             text = messages.AA_ENTER_DURATION
 
-        keyboard = await kb.get_keyboard(message, state)  # Получаем клавиатуру с текущим состоянием
-
-        await message.reply(
-            text=text,
-            reply_markup=keyboard,
-            parse_mode=types.ParseMode.HTML
-        )
+        await update_state_and_send(message, state,
+                                    text=text)
 
 
 @dp.message_handler(state=States.AA_SELECTING_SUBACTIVITY, text=buttons.WITHOUT_SUBACTIVITY)
 async def without_subactivity(message: types.Message, state: FSMContext):
-    await States.AA_ENTER_DURATION.set()  # Устанавливаем состояние ввода продолжительности
-
     # Сохраняем данные подзанятия
     await state.update_data(
         subactivity_id=None
     )
 
-    keyboard = await kb.get_keyboard(message, state)  # Получаем клавиатуру с текущим состоянием
-
-    text = messages.AA_ENTER_DURATION
-
-    await message.reply(
-        text=text,
-        reply_markup=keyboard,
-        parse_mode=types.ParseMode.HTML
-    )
+    await update_state_and_send(message, state,
+                                state=States.AA_ENTER_DURATION,
+                                text=messages.AA_ENTER_DURATION)
 
 
 @dp.message_handler(state=States.AA_SELECTING_SUBACTIVITY)
@@ -102,23 +85,15 @@ async def selected_subactivity(message: types.Message, state: FSMContext):
     )
 
     if subactivity is not None:
-        await States.AA_ENTER_DURATION.set()  # Устанавливаем состояние ввода продолжительности
-
         # Сохраняем данные подзанятия
         await state.update_data(
             subactivity_id=subactivity.id,
             subactivity_name=message.text
         )
 
-        keyboard = await kb.get_keyboard(message, state)  # Получаем клавиатуру с текущим состоянием
-
-        text = messages.AA_ENTER_DURATION
-
-        await message.reply(
-            text=text,
-            reply_markup=keyboard,
-            parse_mode=types.ParseMode.HTML
-        )
+        await update_state_and_send(message, state,
+                                    state=States.AA_ENTER_DURATION,
+                                    text=messages.AA_ENTER_DURATION)
 
 
 @dp.message_handler(state=States.AA_ENTER_DURATION)
@@ -143,14 +118,6 @@ async def create_subactivity(message: types.Message, state: FSMContext):
         duration=td
     )
 
-    await States.MAIN_MENU.set()  # Устанавливаем состояние текущего подзанятий
-
-    keyboard = await kb.get_keyboard(message, state)  # Получаем клавиатуру с текущим состоянием
-
-    text = messages.ACTIVITY_ADDED
-
-    await message.reply(
-        text=text,
-        reply_markup=keyboard,
-        parse_mode=types.ParseMode.HTML
-    )
+    await update_state_and_send(message, state,
+                                state=States.MAIN_MENU,
+                                text=messages.ACTIVITY_ADDED)

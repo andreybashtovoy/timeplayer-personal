@@ -5,6 +5,7 @@ from constants import buttons, messages
 from loader import dp
 from states import States
 from keyboard import kb
+from .core import update_state_and_send
 
 from database import activities, stats
 from modules.timedelta_convert import td_to_dict
@@ -12,26 +13,16 @@ from modules.timedelta_convert import td_to_dict
 
 @dp.message_handler(state=States.MAIN_MENU, text=buttons.MY_ACTIVITIES)
 async def my_activities(message: types.Message, state: FSMContext):
-    await States.MY_ACTIVITIES.set()  # Устанавливаем состояние просмотра личных занятий
-
-    keyboard = await kb.get_keyboard(message, state)  # Получаем клавиатуру с текущим состоянием
-
-    await message.reply(
-        text=messages.MY_ACTIVITIES,
-        reply_markup=keyboard
-    )
+    await update_state_and_send(message, state,
+                                state=States.MY_ACTIVITIES,
+                                text=messages.MY_ACTIVITIES)
 
 
 @dp.message_handler(state=States.MY_ACTIVITIES, text=buttons.CREATE)
 async def request_new_activity_name(message: types.Message, state: FSMContext):
-    await States.ENTER_ACTIVITY_TYPE_NAME.set()  # Устанавливаем состояние ожидания ввода названия занятия
-
-    keyboard = await kb.get_keyboard(message, state)  # Получаем клавиатуру с текущим состоянием
-
-    await message.reply(
-        text=messages.ENTER_ACTIVITY_TYPE_NAME,
-        reply_markup=keyboard
-    )
+    await update_state_and_send(message, state,
+                                state=States.ENTER_ACTIVITY_TYPE_NAME,
+                                text=messages.ENTER_ACTIVITY_TYPE_NAME)
 
 
 @dp.message_handler(state=States.ENTER_ACTIVITY_TYPE_NAME)
@@ -41,14 +32,9 @@ async def save_name_and_ask_about_benefit(message: types.Message, state: FSMCont
         activity_type_name=message.text
     )
 
-    await States.SELECT_WITH_BENEFIT.set()  # Устанавливаем состояние ожидания ответа, с пользой ли занятие
-
-    keyboard = await kb.get_keyboard(message, state)  # Получаем клавиатуру с текущим состоянием
-
-    await message.reply(
-        text=messages.IS_WITH_BENEFIT,
-        reply_markup=keyboard
-    )
+    await update_state_and_send(message, state,
+                                state=States.SELECT_WITH_BENEFIT,
+                                text=messages.IS_WITH_BENEFIT)
 
 
 @dp.message_handler(state=States.SELECT_WITH_BENEFIT, text=[buttons.YES, buttons.NO])
@@ -64,14 +50,9 @@ async def create_activity(message: types.Message, state: FSMContext):
         with_benefit=with_benefit
     )
 
-    await States.MY_ACTIVITIES.set()  # Устанавливаем состояние просмотра личных занятий
-
-    keyboard = await kb.get_keyboard(message, state)  # Получаем клавиатуру с текущим состоянием
-
-    await message.reply(
-        text=messages.ACTIVITY_TYPE_CREATED,
-        reply_markup=keyboard
-    )
+    await update_state_and_send(message, state,
+                                state=States.MY_ACTIVITIES,
+                                text=messages.ACTIVITY_TYPE_CREATED)
 
 
 async def get_current_activity_text(message: types.Message, state: FSMContext) -> str:
@@ -108,15 +89,11 @@ async def select_activity_type(message: types.Message, state: FSMContext):
             current_activity_type_with_benefit=activity_type.with_benefit,
         )
 
-        keyboard = await kb.get_keyboard(message, state)  # Получаем клавиатуру с текущим состоянием
-
         text = await get_current_activity_text(message, state)
 
-        await message.reply(
-            text=text,
-            reply_markup=keyboard,
-            parse_mode=types.ParseMode.HTML
-        )
+        await update_state_and_send(message, state,
+                                    state=States.CURRENT_ACTVITY_TYPE,
+                                    text=text)
 
 
 @dp.message_handler(state=States.CURRENT_ACTVITY_TYPE, text=buttons.REMOVE)
@@ -129,14 +106,9 @@ async def remove_activity_type(message: types.Message, state: FSMContext):
         chat_id=message.chat.id
     )
 
-    await States.MY_ACTIVITIES.set()  # Устанавливаем состояние меню занятий пользователя
-
-    keyboard = await kb.get_keyboard(message, state)  # Получаем клавиатуру с текущим состоянием
-
-    await message.reply(
-        text=messages.REMOVED_ACTIVITY_TYPE,
-        reply_markup=keyboard
-    )
+    await update_state_and_send(message, state,
+                                state=States.MY_ACTIVITIES,
+                                text=messages.REMOVED_ACTIVITY_TYPE)
 
 
 @dp.message_handler(state=States.CURRENT_ACTVITY_TYPE, text=[buttons.MAKE_WITHOUT_BENEFIT, buttons.MAKE_WITH_BENEFIT])
@@ -150,17 +122,11 @@ async def toggle_with_benefit(message: types.Message, state: FSMContext):
         with_benefit=message.text == buttons.MAKE_WITH_BENEFIT
     )
 
+    text = await get_current_activity_text(message, state)
     # Обновляем данные
     await state.update_data(
         current_activity_type_with_benefit=message.text == buttons.MAKE_WITH_BENEFIT,
     )
 
-    keyboard = await kb.get_keyboard(message, state)  # Получаем клавиатуру с текущим состоянием
-
-    text = await get_current_activity_text(message, state)
-
-    await message.reply(
-        text=text,
-        reply_markup=keyboard,
-        parse_mode=types.ParseMode.HTML
-    )
+    await update_state_and_send(message, state,
+                                text=text)

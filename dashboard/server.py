@@ -1,11 +1,5 @@
 from aiohttp import web
 import aiofiles
-import hmac
-import hashlib
-import binascii
-import jwt
-
-from constants import config
 from loader import routes
 
 

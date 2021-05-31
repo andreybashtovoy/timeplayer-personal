@@ -5,6 +5,8 @@ from constants import buttons, messages
 from loader import dp
 from states import States
 from keyboard import kb
+from .core import update_state_and_send
+
 
 
 @dp.message_handler(
@@ -12,67 +14,41 @@ from keyboard import kb
            States.AA_SELECTING_ACTIVITY, States.AA_SELECTING_SUBACTIVITY, States.AA_ENTER_DURATION],
     text=buttons.BACK)
 async def back_to_main_manu(message: types.Message, state: FSMContext):
-    await States.MAIN_MENU.set()  # Устанавливаем состояние главного меню
-
-    keyboard = await kb.get_keyboard(message, state)  # Получаем клавиатуру с текущим состоянием
-
-    await message.reply(
-        text=messages.MAIN_MENU,
-        reply_markup=keyboard
-    )
+    await update_state_and_send(message, state,
+                                state=States.MAIN_MENU,
+                                text=messages.MAIN_MENU)
 
 
 @dp.message_handler(state=[States.ENTER_ACTIVITY_TYPE_NAME, States.SELECT_WITH_BENEFIT, States.CURRENT_ACTVITY_TYPE],
                     text=buttons.BACK)
 async def back_to_my_activities(message: types.Message, state: FSMContext):
-    await States.MY_ACTIVITIES.set()  # Устанавливаем состояние меню занятий пользователя
-
-    keyboard = await kb.get_keyboard(message, state)  # Получаем клавиатуру с текущим состоянием
-
-    await message.reply(
-        text=messages.MAIN_MENU,
-        reply_markup=keyboard
-    )
+    await update_state_and_send(message, state,
+                                state=States.MY_ACTIVITIES,
+                                text=messages.MY_ACTIVITIES)
 
 
 @dp.message_handler(state=[States.SA_CURRENT_ACTIVITY], text=buttons.BACK)
 async def back_to_my_sa_selecting_activity(message: types.Message, state: FSMContext):
-    await States.SA_SELECTING_ACTIVITY.set()  # Устанавливаем состояние выбора занятия
-
-    keyboard = await kb.get_keyboard(message, state)  # Получаем клавиатуру с текущим состоянием
-
-    await message.reply(
-        text=messages.SA_SELECTING_ACTIVITY,
-        reply_markup=keyboard
-    )
+    await update_state_and_send(message, state,
+                                state=States.SA_SELECTING_ACTIVITY,
+                                text=messages.SA_SELECTING_ACTIVITY)
 
 
 @dp.message_handler(state=[States.ENTER_PENALTY], text=buttons.BACK)
 async def back_to_my_sa_selecting_activity(message: types.Message, state: FSMContext):
-    await States.ACTIVE_ACTIVITY.set()  # Устанавливаем состояние выбора занятия
-
-    keyboard = await kb.get_keyboard(message, state)  # Получаем клавиатуру с текущим состоянием
-
-    await message.reply(
-        text=messages.ACTIVE_ACTIVITY,
-        reply_markup=keyboard
-    )
+    await update_state_and_send(message, state,
+                                state=States.ACTIVE_ACTIVITY,
+                                text=messages.ACTIVE_ACTIVITY)
 
 
 @dp.message_handler(state=[States.ENTER_SUBACTIVITY_NAME, States.CURRENT_SUBACIVITY], text=buttons.BACK)
 async def back_to_my_sa_current_activity(message: types.Message, state: FSMContext):
-    await States.SA_CURRENT_ACTIVITY.set()  # Устанавливаем состояние выбора занятия
-
-    keyboard = await kb.get_keyboard(message, state)  # Получаем клавиатуру с текущим состоянием
-
     data = await state.get_data()  # Получаем данные пользователя
 
     text = messages.SA_CURRENT_ACTIVITY.format(
         activity_type_name=data.get('current_activity_type_name')
     )
 
-    await message.reply(
-        text=text,
-        reply_markup=keyboard,
-        parse_mode=types.ParseMode.HTML
-    )
+    await update_state_and_send(message, state,
+                                state=States.SA_CURRENT_ACTIVITY,
+                                text=text)

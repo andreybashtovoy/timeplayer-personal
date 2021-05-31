@@ -6,6 +6,7 @@ from loader import dp
 from keyboard import kb
 from database.user import check_user_and_chat, check_has_activities
 from states import States
+from .core import update_state_and_send
 
 
 @dp.message_handler(CommandStart(), state='*')
@@ -23,11 +24,6 @@ async def bot_start(message: types.Message, state: FSMContext):
         chat_id=message.chat.id
     )
 
-    # Установка состояния главного меню
-    await States.MAIN_MENU.set()
-
-    # Получение клавиатуры главного меню
-    markup = await kb.get_keyboard(message, state)
-
-    await message.reply(f"Привет, {message.from_user.full_name}!",
-                        reply_markup=markup)
+    await update_state_and_send(message, state,
+                                state=States.MAIN_MENU,
+                                text=f"Привет, {message.from_user.full_name}!")
