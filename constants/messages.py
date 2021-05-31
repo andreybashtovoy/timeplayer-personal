@@ -127,4 +127,8 @@ ENTER_PENALTY = text(
     "Введи количество минут штрафа к занятию"
 )
 
+PENALTY_ERROR = text(
+    "Введённое время превышает продолжительность!"
+)
+
 ACTIVE_ACTIVITY = emojize(':arrow_down::arrow_down::arrow_down:')

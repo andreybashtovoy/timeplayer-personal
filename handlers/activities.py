@@ -5,6 +5,7 @@ from constants import buttons, messages
 from loader import dp
 from states import States
 from keyboard import kb
+from .core import update_state_and_send
 
 from database import activities, user
 
@@ -13,14 +14,9 @@ from modules.timedelta_convert import td_to_dict
 
 @dp.message_handler(state=States.MAIN_MENU, text=buttons.START_ACTIVITY)
 async def select_activity(message: types.Message, state: FSMContext):
-    await States.SELECTING_ACTIVITY.set()  # Устанавливаем состояние выбора занятия
-
-    keyboard = await kb.get_keyboard(message, state)  # Получаем клавиатуру с текущим состоянием
-
-    await message.reply(
-        text=messages.SELECTING_ACTIVITY,
-        reply_markup=keyboard
-    )
+    await update_state_and_send(message, state,
+                                state=States.SELECTING_ACTIVITY,
+                                text=messages.SELECTING_ACTIVITY)
 
 
 @dp.message_handler(state=States.SELECTING_ACTIVITY)
@@ -29,32 +25,18 @@ async def start_activity(message: types.Message, state: FSMContext):
                                                        message.text)  # Запускаем занятие
 
     if activity is not None:
-        await States.ACTIVE_ACTIVITY.set()  # Устанавливаем состояние активного занятия
-
-        keyboard = await kb.get_keyboard(message, state)  # Получаем клавиатуру с текущим состоянием
-
-        # Получаем текст сообщения и форматируем с названием занятия
-        text = messages.STARTED_ACTIVITY.format(
-            activity_type_name=message.text
-        )
-
-        await message.reply(
-            text=text,
-            parse_mode=types.ParseMode.HTML,
-            reply_markup=keyboard
-        )
+        await update_state_and_send(message, state,
+                                    state=States.ACTIVE_ACTIVITY,
+                                    text=messages.STARTED_ACTIVITY.format(
+                                        activity_type_name=message.text
+                                    ))
 
 
 @dp.message_handler(state=States.MAIN_MENU, text=buttons.START_SUBACTIVITY)
 async def select_subactivity(message: types.Message, state: FSMContext):
-    await States.SELECTING_SUBACTIVITY.set()  # Устанавливаем состояние выбора занятия
-
-    keyboard = await kb.get_keyboard(message, state)  # Получаем клавиатуру с текущим состоянием
-
-    await message.reply(
-        text=messages.SELECTING_SUBACTIVITY,
-        reply_markup=keyboard
-    )
+    await update_state_and_send(message, state,
+                                state=States.SELECTING_SUBACTIVITY,
+                                text=messages.SELECTING_SUBACTIVITY)
 
 
 @dp.message_handler(state=States.SELECTING_SUBACTIVITY)
@@ -73,22 +55,15 @@ async def start_subactivity(message: types.Message, state: FSMContext):
                 subactivity_id=subactivity.id
             )
 
-            await States.ACTIVE_ACTIVITY.set()  # Устанавливаем состояние активного занятия
-
-            keyboard = await kb.get_keyboard(message, state)  # Получаем клавиатуру с текущим состоянием
-
             # Получаем текст сообщения и форматируем с названием занятия
             text = messages.STARTED_SUBACTIVITY.format(
                 activity_type_name=subactivity.activity_name,
                 subactivity_name=subactivity.name
             )
 
-            await message.reply(
-                text=text,
-                parse_mode=types.ParseMode.HTML,
-                reply_markup=keyboard
-            )
-
+            await update_state_and_send(message, state,
+                                        state=States.ACTIVE_ACTIVITY,
+                                        text=text)
             break
 
 
@@ -97,37 +72,22 @@ async def stop_activity(message: types.Message, state: FSMContext):
     activity, activity_type = await activities.stop_activity(message.from_user.id,
                                                              message.chat.id)  # Останавливаем занятие
 
-    await States.MAIN_MENU.set()  # Устанавливаем состояние главного меню
-
-    keyboard = await kb.get_keyboard(message, state)  # Получаем клавиатуру с текущим состоянием
-
     # Получаем текст сообщения и форматируем с названием занятия и продолжительностью
     text = messages.STOPPED_ACTIVITY.format(
         activity_type_name=activity_type.name,
         **td_to_dict(activity.duration)
     )
 
-    await message.reply(
-        text=text,
-        parse_mode=types.ParseMode.HTML,
-        reply_markup=keyboard
-    )
+    await update_state_and_send(message, state,
+                                state=States.MAIN_MENU,
+                                text=text)
 
 
 @dp.message_handler(state=States.ACTIVE_ACTIVITY, text=buttons.STOP_PENALTY)
 async def stop_penalty(message: types.Message, state: FSMContext):
-    await States.ENTER_PENALTY.set()
-
-    keyboard = await kb.get_keyboard(message, state)  # Получаем клавиатуру с текущим состоянием
-
-    # Получаем текст сообщения и форматируем с названием занятия и продолжительностью
-    text = messages.ENTER_PENALTY
-
-    await message.reply(
-        text=text,
-        parse_mode=types.ParseMode.HTML,
-        reply_markup=keyboard
-    )
+    await update_state_and_send(message, state,
+                                state=States.ENTER_PENALTY,
+                                text=messages.ENTER_PENALTY)
 
 
 @dp.message_handler(state=States.ENTER_PENALTY)
@@ -139,25 +99,19 @@ async def entered_penalty(message: types.Message, state: FSMContext):
             activity, activity_type = await activities.stop_activity(message.from_user.id,
                                                                  message.chat.id,
                                                                      delta=delta)  # Останавливаем занятие
-        except:
-            #### ERROR MESSAGE
+        except Exception as e:
+            await update_state_and_send(message, state,
+                                        text=messages.PENALTY_ERROR)
             return
 
-        await States.MAIN_MENU.set()  # Устанавливаем состояние главного меню
-
-        keyboard = await kb.get_keyboard(message, state)  # Получаем клавиатуру с текущим состоянием
-
-        # Получаем текст сообщения и форматируем с названием занятия и продолжительностью
         text = messages.STOPPED_ACTIVITY.format(
             activity_type_name=activity_type.name,
             **td_to_dict(activity.duration)
         )
 
-        await message.reply(
-            text=text,
-            parse_mode=types.ParseMode.HTML,
-            reply_markup=keyboard
-        )
+        await update_state_and_send(message, state,
+                                    state=States.MAIN_MENU,
+                                    text=text)
 
 
 @dp.message_handler(state=States.ACTIVE_ACTIVITY, text=buttons.STATUS)
@@ -165,16 +119,11 @@ async def status(message: types.Message, state: FSMContext):
     # Получаем активное занятие пользователя и его продолжительность
     activity_type, duration = await user.get_user_active_activity(message.from_user.id, message.chat.id)
 
-    keyboard = await kb.get_keyboard(message, state)  # Получаем клавиатуру с текущим состоянием
-
     # Получаем текст сообщения и форматируем с названием занятия и продолжительностью
     text = messages.STATUS.format(
         activity_type_name=activity_type.name,
         **td_to_dict(duration)
     )
 
-    await message.reply(
-        text=text,
-        parse_mode=types.ParseMode.HTML,
-        reply_markup=keyboard
-    )
+    await update_state_and_send(message, state,
+                                text=text)

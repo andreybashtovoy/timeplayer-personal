@@ -5,10 +5,32 @@ from database import user
 
 from loader import bot
 
+from constants.config import BOT_TOKEN
+
+from io import BytesIO
+
 
 @routes.get('/user')
 async def hello(request):
     return web.Response(text="user")
+
+
+@routes.get('/user/photo')
+async def info(request):
+    user_id = request.query.get('user_id')
+
+    if user_id is None:
+        return web.HTTPBadRequest()
+
+    photos_r = await bot.get_user_profile_photos(
+        user_id=user_id
+    )
+
+    bf = BytesIO()
+
+    await photos_r.photos[0][-1].download(destination=bf)
+
+    return web.Response(body=bf, content_type="image/png")
 
 
 @routes.get('/user/info')
@@ -24,7 +46,14 @@ async def info(request):
         chat_id=chat_id
     )
 
-    return web.json_response(result.user.as_json())
+    res = {
+        'first_name': result.user.first_name,
+        'id': result.user.id,
+        'last_name': result.user.last_name,
+        'username': result.user.username
+    }
+
+    return web.json_response(res)
 
 
 @routes.get('/user/activitytypes')
