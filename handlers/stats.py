@@ -13,7 +13,7 @@ from .core import update_state_and_send
 async def my_stats(message: types.Message, state: FSMContext):
 
     text = messages.MY_STATS.format(
-        link=f"{config.SERVER_URL}/user/{message.from_user.id}/{message.chat.id}"
+        link=f"{config.SERVER_URL}/user/{message.chat.id}/{message.from_user.id}"
     )
 
     await update_state_and_send(message, state,
