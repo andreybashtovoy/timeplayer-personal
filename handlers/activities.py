@@ -7,7 +7,7 @@ from states import States
 from keyboard import kb
 from .core import update_state_and_send
 
-from database import activities, user
+from database import activities, user, stats
 
 from modules.timedelta_convert import td_to_dict
 
@@ -72,10 +72,22 @@ async def stop_activity(message: types.Message, state: FSMContext):
     activity, activity_type = await activities.stop_activity(message.from_user.id,
                                                              message.chat.id)  # Останавливаем занятие
 
+    total_today = await stats.get_today_total_activity_duration(
+        user_id=message.from_user.id,
+        chat_id=message.chat.id,
+        activity_type_id=activity.activity_type,
+        subactivity_id=activity.subactivity
+    )
+
+    dict_total = td_to_dict(total_today)
+
     # Получаем текст сообщения и форматируем с названием занятия и продолжительностью
     text = messages.STOPPED_ACTIVITY.format(
         activity_type_name=activity_type.name,
-        **td_to_dict(activity.duration)
+        **td_to_dict(activity.duration),
+        total_hours=dict_total['hours'],
+        total_minutes=dict_total['minutes'],
+        total_seconds=dict_total['seconds']
     )
 
     await update_state_and_send(message, state,

@@ -23,7 +23,8 @@ STARTED_SUBACTIVITY = text(
 STOPPED_ACTIVITY = text(
     emojize(':white_check_mark: Занятие завершено ({activity_type_name})'),
     "",
-    emojize(':stopwatch: Продолжительность {hours} часов {minutes} минут {seconds} секунд'),
+    emojize(':stopwatch: Продолжительность: {hours} часов {minutes} минут {seconds} секунд'),
+    emojize('🧮 Всего за сегодня: {total_hours} часов {total_minutes} минут {total_seconds} секунд'),
     sep="\n"
 )
 
