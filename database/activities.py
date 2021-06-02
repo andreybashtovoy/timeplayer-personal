@@ -77,7 +77,7 @@ async def stop_activity(user_id, chat_id, delta=None) -> Tuple[Activity, Activit
 
         if start_time_local.date() != end_time_local.date():
             await activity.update(
-                duration=duration_first_part
+                duration=duration_first_part - timedelta(seconds=1)
             ).apply()
 
             activity_2 = await Activity.create(
