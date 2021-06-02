@@ -7,6 +7,10 @@ from sqlalchemy import and_
 
 from .user import get_chat_activity_types
 
+from dateutil import tz
+
+local_tz = tz.gettz('Europe/Zaporozhye')
+
 
 async def get_chat_activity_type_by_name(chat_id, activity_name) -> ActivityType:
     activity_types = await get_chat_activity_types(chat_id)
@@ -55,6 +59,7 @@ async def stop_activity(user_id, chat_id, delta=None) -> Tuple[Activity, Activit
         and_(Activity.user_id == user_id, Activity.chat_id == chat_id, Activity.duration == None)).gino.all()
 
     for activity in activities:
+        # Проверка валидности штрафа, если он есть
         if delta is None:
             duration = datetime.utcnow() - activity.start_time
         else:
@@ -62,7 +67,34 @@ async def stop_activity(user_id, chat_id, delta=None) -> Tuple[Activity, Activit
                 duration = datetime.utcnow() - activity.start_time - delta
             else:
                 raise Exception
-        await activity.update(duration=duration).apply()
+
+        # Если занятие было активно в полночь, то делим пополам
+        start_time_local = activity.start_time.replace(tzinfo=tz.UTC).astimezone(local_tz)
+        end_time_local = (activity.start_time + duration).replace(tzinfo=tz.UTC).astimezone(local_tz)
+
+        duration_first_part = datetime.combine(end_time_local.date(), datetime.min.time()).replace(
+            tzinfo=local_tz) - start_time_local
+
+        if start_time_local.date() != end_time_local.date():
+            await activity.update(
+                duration=duration_first_part
+            ).apply()
+
+            activity_2 = await Activity.create(
+                user_id=user_id,
+                chat_id=chat_id,
+                activity_type=activity.activity_type,
+                subactivity=activity.subactivity,
+                duration=duration - duration_first_part,
+                start_time=datetime.combine(end_time_local.date(), datetime.min.time()).replace(
+                    tzinfo=local_tz).astimezone(tz.UTC).replace(tzinfo=None)
+            )
+
+            activity = activity_2
+        else:
+            await activity.update(
+                duration=duration
+            ).apply()
 
         activity_type = await ActivityType.query.where(ActivityType.id == activity.activity_type).gino.first()
 
